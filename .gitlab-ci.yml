@@ -1,6 +1,8 @@
 image: python:3.7
 
 test:
+  tags:
+    - container
   script:
-    - pip install -r requirements.txt.in
-    - python test.py
+    - pip3 install -r requirements.txt.in
+    - python3 test.py
