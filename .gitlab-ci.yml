@@ -5,4 +5,4 @@ test:
     - container
   script:
     - pip3 install -r requirements.txt.in
-    - arevio_flow/manage.py test
+    - python3 arevio_flow/manage.py test
