@@ -36,3 +36,15 @@ class GroupViewSet(viewsets.ModelViewSet):
     """
     queryset = Group.objects.all()
     serializer_class = GroupSerializer
+
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from django.shortcuts import get_object_or_404
+
+class CurrentUserView(APIView):
+    def get(self, request):
+        if (request.user.is_authenticated == False):
+            return Response({'error': 'not authenticated'})
+        instance = get_object_or_404(User, pk=request.user.pk)
+        serializer = UserSerializer(instance, context={'request': request})
+        return Response(serializer.data)

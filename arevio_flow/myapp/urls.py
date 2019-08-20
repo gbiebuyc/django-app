@@ -9,6 +9,7 @@ router.register(r'groups', views.GroupViewSet)
 
 urlpatterns = [
     path('api/', include(router.urls)),
+    path('api/me/', views.CurrentUserView.as_view()),
     path('api-auth/', include('rest_framework.urls', namespace='rest_framework')),
     re_path(r"^.*$", IndexTemplateView.as_view(), name="entry-point")
 ]
