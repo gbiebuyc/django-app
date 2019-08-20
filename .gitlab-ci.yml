@@ -4,5 +4,5 @@ test:
   tags:
     - container
   script:
-    - pip3 install -r requirements.txt.in
+    - pip3 install -r requirements.txt
     - python3 arevio_flow/manage.py test
