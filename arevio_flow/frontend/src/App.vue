@@ -3,7 +3,8 @@
     <div id="nav">
       <router-link to="/">Rapport annuel</router-link> |
       <router-link to="/profile">Profile</router-link> |
-      <router-link to="/about">About</router-link>
+      <router-link to="/about">About</router-link> |
+      <a href="/accounts/logout/">Logout</a>
     </div>
     <router-view id="main"/>
   </div>

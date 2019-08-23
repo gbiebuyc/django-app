@@ -1,7 +1,8 @@
 from django.views.generic.base import TemplateView
 from django.conf import settings
+from django.contrib.auth.mixins import LoginRequiredMixin
 
-class IndexTemplateView(TemplateView):
+class IndexTemplateView(LoginRequiredMixin, TemplateView):
 
     def get_template_names(self):
         # if settings.DEBUG:
@@ -45,6 +46,23 @@ class CurrentUserView(APIView):
     def get(self, request):
         if (request.user.is_authenticated == False):
             return Response({'error': 'not authenticated'})
-        instance = get_object_or_404(User, pk=request.user.pk)
-        serializer = UserSerializer(instance, context={'request': request})
+        serializer = UserSerializer(request.user, context={'request': request})
         return Response(serializer.data)
+
+from django.contrib.auth import login, authenticate
+from django.contrib.auth.forms import UserCreationForm
+from django.shortcuts import render, redirect
+
+def signup(request):
+    if request.method == 'POST':
+        form = UserCreationForm(request.POST)
+        if form.is_valid():
+            form.save()
+            username = form.cleaned_data.get('username')
+            raw_password = form.cleaned_data.get('password1')
+            user = authenticate(username=username, password=raw_password)
+            login(request, user)
+            return redirect('entry-point')
+    else:
+        form = UserCreationForm()
+    return render(request, 'registration/signup.html', {'form': form})

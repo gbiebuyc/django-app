@@ -11,5 +11,7 @@ urlpatterns = [
     path('api/', include(router.urls)),
     path('api/me/', views.CurrentUserView.as_view()),
     path('api-auth/', include('rest_framework.urls', namespace='rest_framework')),
+    path('accounts/signup/', views.signup, name='signup'),
+    path('accounts/', include('django.contrib.auth.urls')),
     re_path(r"^.*$", IndexTemplateView.as_view(), name="entry-point")
 ]
