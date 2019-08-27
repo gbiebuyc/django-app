@@ -15,7 +15,7 @@ class IndexTemplateView(LoginRequiredMixin, TemplateView):
 
 from django.contrib.auth.models import User, Group
 from rest_framework import viewsets
-from .serializers import UserSerializer, GroupSerializer
+from . import serializers, models
 
 
 class UserViewSet(viewsets.ModelViewSet):
@@ -23,7 +23,7 @@ class UserViewSet(viewsets.ModelViewSet):
     API endpoint that allows users to be viewed or edited.
     """
     queryset = User.objects.all().order_by('-date_joined')
-    serializer_class = UserSerializer
+    serializer_class = serializers.UserSerializer
 
     def get_object(self):
         if self.kwargs.get('pk') == 'me':
@@ -36,7 +36,17 @@ class GroupViewSet(viewsets.ModelViewSet):
     API endpoint that allows groups to be viewed or edited.
     """
     queryset = Group.objects.all()
-    serializer_class = GroupSerializer
+    serializer_class = serializers.GroupSerializer
+
+
+class ProfileViewSet(viewsets.ModelViewSet):
+    queryset = models.Profile.objects.all()
+    serializer_class = serializers.ProfileSerializer
+
+
+class CompanyViewSet(viewsets.ModelViewSet):
+    queryset = models.Company.objects.all()
+    serializer_class = serializers.CompanySerializer
 
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -46,7 +56,7 @@ class CurrentUserView(APIView):
     def get(self, request):
         if (request.user.is_authenticated == False):
             return Response({'error': 'not authenticated'})
-        serializer = UserSerializer(request.user, context={'request': request})
+        serializer = serializers.UserSerializer(request.user, context={'request': request})
         return Response(serializer.data)
 
 from django.contrib.auth import login, authenticate

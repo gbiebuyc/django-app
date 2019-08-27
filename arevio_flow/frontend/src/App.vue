@@ -1,14 +1,33 @@
 <template>
   <div id="app">
     <div id="nav">
-      <router-link to="/">Rapport annuel</router-link> |
+      <router-link to="/">Home</router-link> |
+      <router-link to="/annualreport">Annual Report</router-link> |
       <router-link to="/profile">Profile</router-link> |
-      <router-link to="/about">About</router-link> |
       <a href="/accounts/logout/">Logout</a>
     </div>
-    <router-view id="main"/>
+    <router-view id="main" :userprofile="userprofile"/>
   </div>
 </template>
+
+<script>
+import { apiService } from "@/common/api.service.js";
+export default {
+  data() {
+    return {
+      userprofile: null,
+    };
+  },
+  methods: {
+  },
+  created() {
+    apiService('/api/me/')
+      .then(data => {
+        this.userprofile = data;
+      })
+  },
+};
+</script>
 
 <style>
 #app {

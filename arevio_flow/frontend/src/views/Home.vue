@@ -1,70 +1,29 @@
 <template>
   <div class="home">
-    <div class="TreeBrowser">
-      <TreeBrowser
-        :node="root"
-        :initialExpanded="true"
-        @onClick="nodeWasClicked"
-      />
-    </div>
-    <NodeDetail class="NodeDetail" :node="selectedNode"/>
+    <h1>Home</h1>
+    <ul v-if="companies.length">
+      <li v-for="c in companies" :key="c.url">
+        <router-link to="">{{ c.name }}</router-link>
+      </li>
+    </ul>
+    <p v-else>no companies</p>
   </div>
 </template>
 
 <script>
-// @ is an alias to /src
-import TreeBrowser from "@/components/TreeBrowser.vue";
-import NodeDetail from "@/components/NodeDetail.vue";
-import root from "@/root.json";
-
 export default {
   name: 'home',
-  components: {
-    TreeBrowser,
-    NodeDetail,
-  },
-  data() {
-    return {
-      root,
-      selectedNode: null,
-    };
-  },
-  methods: {
-    nodeWasClicked(node) {
-      this.selectedNode = node;
-      this.selectedNode.content = [''];
-      fetch('https://baconipsum.com/api/?type=meat-and-filler')
-        .then(function(response) {
-          return response.json();
-        })
-        .then(myJson => {
-          this.selectedNode = {
-            name: this.selectedNode.name,
-            content: myJson,
-          }
-        }
-      );
+  props: ['userprofile'],
+  computed: {
+    companies: function () {
+      if (!this.userprofile)
+        return {};
+      return this.userprofile.profile.company;
     }
-  }
+  },
 };
 </script>
 
 <style scoped>
-.TreeBrowser {
-  position: fixed;
-  overflow-y: scroll;
-  top: 80px;
-  bottom: 0px;
-  left: 0px;
-  width: 300px;
-  padding: 20px 0 0 20px;
-  box-sizing: border-box;
-}
 
-.NodeDetail {
-  position: absolute;
-  left: 300px;
-  padding: 20px;
-  text-align: left;
-}
 </style>

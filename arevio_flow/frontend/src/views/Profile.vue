@@ -6,22 +6,9 @@
 </template>
 
 <script>
-import { apiService } from "@/common/api.service.js";
 export default {
   name: 'profile',
-  data() {
-    return {
-      userprofile: null,
-    };
-  },
-  methods: {
-  },
-  created() {
-    apiService('/api/me/')
-      .then(data => {
-        this.userprofile = data;
-      })
-  },
+  props: ['userprofile'],
 };
 </script>
 
