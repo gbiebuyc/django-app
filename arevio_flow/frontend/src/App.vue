@@ -5,6 +5,9 @@
       <router-link to="/annualreport">Annual Report</router-link> |
       <router-link to="/profile">Profile</router-link> |
       <a href="/accounts/logout/">Logout</a>
+      <span v-if="userprofile && userprofile.is_staff"> |
+        <a href="/admin/">Admin site</a>
+      </span>
     </div>
     <router-view id="main" :userprofile="userprofile"/>
   </div>
