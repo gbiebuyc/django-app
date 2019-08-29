@@ -5,7 +5,7 @@ from django.dispatch import receiver
 
 class Company(models.Model):
     name = models.CharField(max_length=200)
-    logo = models.URLField(max_length=200, blank=True)
+    logo = models.ImageField(blank=True)
     address = models.CharField(max_length=200, blank=True)
     class Meta:
         verbose_name_plural = 'All companies'
