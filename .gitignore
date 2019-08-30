@@ -2,6 +2,7 @@
 
 .vscode
 webpack-stats.json
+arevio_flow/static/
 
 # Created by https://www.gitignore.io/api/vim,node,linux,python,django
 # Edit at https://www.gitignore.io/?templates=vim,node,linux,python,django
