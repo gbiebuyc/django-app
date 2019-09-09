@@ -24,7 +24,7 @@ export default {
     companies: function () {
       if (!this.userprofile)
         return {};
-      return this.userprofile.profile.company;
+      return this.userprofile.companies;
     }
   },
 };

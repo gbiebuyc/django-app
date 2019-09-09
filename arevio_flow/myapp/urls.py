@@ -8,7 +8,7 @@ from django.conf import settings
 router = routers.DefaultRouter()
 router.register(r'users', views.UserViewSet)
 router.register(r'groups', views.GroupViewSet)
-router.register(r'profiles', views.ProfileViewSet)
+# router.register(r'profiles', views.ProfileViewSet)
 router.register(r'companies', views.CompanyViewSet)
 
 urlpatterns = [

@@ -39,9 +39,9 @@ class GroupViewSet(viewsets.ModelViewSet):
     serializer_class = serializers.GroupSerializer
 
 
-class ProfileViewSet(viewsets.ModelViewSet):
-    queryset = models.Profile.objects.all()
-    serializer_class = serializers.ProfileSerializer
+# class ProfileViewSet(viewsets.ModelViewSet):
+#     queryset = models.Profile.objects.all()
+#     serializer_class = serializers.ProfileSerializer
 
 
 class CompanyViewSet(viewsets.ModelViewSet):
