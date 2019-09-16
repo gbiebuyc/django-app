@@ -1,11 +1,11 @@
 from django.contrib.auth.models import User, Group
-from .models import Company
+from . import models
 from rest_framework import serializers
 
 
 class CompanySerializer(serializers.ModelSerializer):
     class Meta:
-        model = Company
+        model = models.Company
         fields = '__all__'
 
 
@@ -31,3 +31,9 @@ class GroupSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Group
         fields = ['url', 'name']
+
+
+class AnnualReportSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.AnnualRapport
+        fields = '__all__'

@@ -10,6 +10,7 @@ router.register(r'users', views.UserViewSet)
 router.register(r'groups', views.GroupViewSet)
 # router.register(r'profiles', views.ProfileViewSet)
 router.register(r'companies', views.CompanyViewSet)
+router.register(r'annualreports', views.AnnualReportViewSet)
 
 urlpatterns = [
     path('api/', include(router.urls)),

@@ -31,3 +31,10 @@ class Company(models.Model):
 #     if created:
 #         Profile.objects.create(user=instance)
 #     instance.profile.save()
+
+
+class AnnualRapport(models.Model):
+    company = models.ForeignKey(Company, on_delete=models.CASCADE)
+    taxonomy = models.FileField(blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)

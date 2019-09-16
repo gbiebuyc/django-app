@@ -7,7 +7,8 @@
         <img :src="c.logo || 'https://www.royalcontainers.com/wp-content/uploads/2017/03/logo-placeholder.jpeg'" class="card-img-top">
         <div class="card-body">
           <h5 class="card-title">{{ c.name }}</h5>
-          <router-link class="stretched-link" to=""></router-link>
+          <!-- <router-link class="stretched-link" :to="'/annualreportlist/' + c.id "></router-link> -->
+          <router-link class="stretched-link" :to="{ name: 'annualreportlist', query: { company: c.id }}"></router-link>
         </div>
       </div>
     </div>

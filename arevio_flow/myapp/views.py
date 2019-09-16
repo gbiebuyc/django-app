@@ -48,6 +48,19 @@ class CompanyViewSet(viewsets.ModelViewSet):
     queryset = models.Company.objects.all()
     serializer_class = serializers.CompanySerializer
 
+
+class AnnualReportViewSet(viewsets.ModelViewSet):
+    queryset = models.AnnualRapport.objects.all().order_by("-created_at")
+    serializer_class = serializers.AnnualReportSerializer
+
+    def get_queryset(self):
+        qs = self.queryset
+        company = self.request.query_params.get('company')
+        if company is not None:
+            qs = qs.filter(company__pk=company)
+        return qs
+
+
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from django.shortcuts import get_object_or_404

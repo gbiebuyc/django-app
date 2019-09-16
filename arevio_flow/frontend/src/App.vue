@@ -2,7 +2,7 @@
   <div id="app">
     <div id="nav">
       <router-link to="/">Home</router-link> |
-      <router-link to="/annualreport">Annual Report</router-link> |
+      <!-- <router-link to="/annualreport">Annual Report</router-link> | -->
       <router-link to="/profile">Profile</router-link> |
       <a href="/accounts/logout/">Logout</a>
       <span v-if="userprofile && userprofile.is_staff"> |
