@@ -1,37 +1,39 @@
 <template>
   <div>
-    <h1>Reports for {{ companyName }}</h1>
+    <p v-if="loading">Loading...</p>
+    <div v-else>
+      <h1>Reports for {{ companyName }}</h1>
+      <div id="NewReportLinkBox" style="display:block; text-align:left;">
+        <a class="icon add" href="" onclick="return false;" @click="onClickAddReport">
+          <span>[New Report]</span>
+        </a>
+      </div>
 
-    <div id="NewReportLinkBox" style="display:block; text-align:left;">
-      <a class="icon add" href="" onclick="return false;" @click="onClickAddReport">
-        <span>[New Report]</span>
-      </a>
+      <table>
+        <thead>
+          <tr class="header" id="theader">
+            <th onclick="javascript:sortTable(0);">Name</th>
+            <!-- <th class="detailsColumn" onclick="javascript:sortTable(1);"> -->
+            <th class="detailsColumn">
+              Taxonomy
+            </th>
+            <!-- <th class="detailsColumn" onclick="javascript:sortTable(2);"> -->
+            <th class="detailsColumn">
+              Date Modified
+            </th>
+          </tr>
+        </thead>
+        <tbody id="tbody">
+          <tr v-for="item in list" :key="item.id">
+            <td><router-link class="icon file" to="/annualreport">{{ "Report_" + item.id.toString().padStart(3, 0) }}</router-link></td>
+            <!-- <td><router-link class="icon file" to="/annualreport">Report</router-link></td> -->
+            <td class="detailsColumn">{{ getFileNameFromPath(item.taxonomy) }}</td>
+            <td class="detailsColumn">{{ getDateFormatted(new Date(item.updated_at)) }}</td>
+            <td>&nbsp;<a class="icon delete" href="" onclick="return false;" @click="onClickDeleteReport(item.id)"></a></td>
+          </tr>
+        </tbody>
+      </table>
     </div>
-
-    <table>
-      <thead>
-        <tr class="header" id="theader">
-          <th onclick="javascript:sortTable(0);">Name</th>
-          <!-- <th class="detailsColumn" onclick="javascript:sortTable(1);"> -->
-          <th class="detailsColumn">
-            Taxonomy
-          </th>
-          <!-- <th class="detailsColumn" onclick="javascript:sortTable(2);"> -->
-          <th class="detailsColumn">
-            Date Modified
-          </th>
-        </tr>
-      </thead>
-      <tbody id="tbody">
-        <tr v-for="item in list" :key="item.id">
-          <td><router-link class="icon file" to="/annualreport">{{ "Report_" + item.id.toString().padStart(3, 0) }}</router-link></td>
-          <!-- <td><router-link class="icon file" to="/annualreport">Report</router-link></td> -->
-          <td class="detailsColumn">{{ getFileNameFromPath(item.taxonomy) }}</td>
-          <td class="detailsColumn">{{ getDateFormatted(new Date(item.updated_at)) }}</td>
-          <td>&nbsp;<a class="icon delete" href="" onclick="return false;" @click="onClickDeleteReport(item.id)"></a></td>
-        </tr>
-      </tbody>
-    </table>
   </div>
 </template>
 
@@ -96,6 +98,11 @@ export default {
     onClickDeleteReport: function(reportId) {
       apiService(`/api/annualreports/${reportId}/`, "DELETE")
         .then(() => this.fetchData());
+    },
+  },
+  computed: {
+    loading: function () {
+      return ((this.companyName === null) || (this.list === null)) ? true : false;
     },
   },
 };
