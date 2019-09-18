@@ -4,7 +4,7 @@
     <div v-else>
       <h1>Reports for {{ companyName }}</h1>
       <div id="NewReportLinkBox" style="display:block; text-align:left;">
-        <a class="icon add" href="" onclick="return false;" @click="onClickAddReport">
+        <a title="Add new report to the list" class="icon add" href="" onclick="return false;" @click="onClickAddReport">
           <span>[New Report]</span>
         </a>
       </div>
@@ -21,15 +21,19 @@
             <th class="detailsColumn">
               Date Modified
             </th>
+            <th class="detailsColumn">
+              Modified
+            </th>
           </tr>
         </thead>
         <tbody id="tbody">
           <tr v-for="item in list" :key="item.id">
-            <td><router-link class="icon file" to="/annualreport">{{ "Report_" + item.id.toString().padStart(3, 0) }}</router-link></td>
+            <td><router-link title="Edit this report" class="icon file" to="/annualreport">{{ "Report_" + item.id.toString().padStart(3, 0) }}</router-link></td>
             <!-- <td><router-link class="icon file" to="/annualreport">Report</router-link></td> -->
             <td class="detailsColumn">{{ getFileNameFromPath(item.taxonomy) }}</td>
-            <td class="detailsColumn">{{ getDateFormatted(new Date(item.updated_at)) }}</td>
-            <td>&nbsp;<a class="icon delete" href="" onclick="return false;" @click="onClickDeleteReport(item.id)"></a></td>
+            <td class="detailsColumn">{{ new Date(item.updated_at).toLocaleString() }}</td>
+            <td class="detailsColumn">{{ timeSince(new Date(item.updated_at)) + " ago" }}</td>
+            <td>&nbsp;<a title="Delete this report" class="icon delete" href="" onclick="return false;" @click="onClickDeleteReport(item.id)"></a></td>
           </tr>
         </tbody>
       </table>
@@ -63,27 +67,24 @@ export default {
           this.list = data.results;
         })
     },
-    getDateFormatted: function (date) {
-      function timeSince(date) {
-        var seconds = Math.floor((new Date() - date) / 1000);
-        var interval = Math.floor(seconds / 31536000);
-        if (interval > 1)
-          return interval + " years";
-        interval = Math.floor(seconds / 2592000);
-        if (interval > 1)
-          return interval + " months";
-        interval = Math.floor(seconds / 86400);
-        if (interval > 1)
-          return interval + " days";
-        interval = Math.floor(seconds / 3600);
-        if (interval > 1)
-          return interval + " hours";
-        interval = Math.floor(seconds / 60);
-        if (interval > 1)
-          return interval + " minutes";
-        return Math.floor(seconds) + " seconds";
-      }
-      return date.toLocaleString() + ' (' + timeSince(date) + ' ago)';
+    timeSince: function (date) {
+      var seconds = Math.floor((new Date() - date) / 1000);
+      var interval = Math.floor(seconds / 31536000);
+      if (interval > 1)
+        return interval + " years";
+      interval = Math.floor(seconds / 2592000);
+      if (interval > 1)
+        return interval + " months";
+      interval = Math.floor(seconds / 86400);
+      if (interval > 1)
+        return interval + " days";
+      interval = Math.floor(seconds / 3600);
+      if (interval > 1)
+        return interval + " hours";
+      interval = Math.floor(seconds / 60);
+      if (interval > 1)
+        return interval + " minutes";
+      return Math.floor(seconds) + " seconds";
     },
     getFileNameFromPath: function (path) {
       if (!path)
