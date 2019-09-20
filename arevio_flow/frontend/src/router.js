@@ -16,7 +16,7 @@ export default new Router({
       component: Home
     },
     {
-      path: '/annualreport',
+      path: '/annualreport/:id',
       name: 'annualreport',
       component: AnnualReport
     },

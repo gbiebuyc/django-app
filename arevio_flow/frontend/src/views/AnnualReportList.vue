@@ -28,7 +28,7 @@
         </thead>
         <tbody id="tbody">
           <tr v-for="item in list" :key="item.id">
-            <td><router-link title="Edit this report" class="icon file" to="/annualreport">{{ "Report_" + item.id.toString().padStart(3, 0) }}</router-link></td>
+            <td><router-link title="Edit this report" class="icon file" :to="{ name: 'annualreport', params: { id: item.id }}">{{ "Report_" + item.id.toString().padStart(3, 0) }}</router-link></td>
             <!-- <td><router-link class="icon file" to="/annualreport">Report</router-link></td> -->
             <td class="detailsColumn">{{ getFileNameFromPath(item.taxonomy) }}</td>
             <td class="detailsColumn">{{ new Date(item.updated_at).toLocaleString() }}</td>

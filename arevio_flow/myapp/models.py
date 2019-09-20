@@ -35,6 +35,6 @@ class Company(models.Model):
 
 class AnnualRapport(models.Model):
     company = models.ForeignKey(Company, on_delete=models.CASCADE)
-    taxonomy = models.FileField(blank=True)
+    taxonomy = models.FileField(blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
