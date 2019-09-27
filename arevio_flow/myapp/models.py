@@ -22,17 +22,6 @@ class Company(models.Model):
         return self.name
 
 
-# class Profile(models.Model):
-#     user = models.OneToOneField(User, on_delete=models.CASCADE)
-#     company = models.ManyToManyField('company')
-
-# @receiver(post_save, sender=User)
-# def update_user_profile(sender, instance, created, **kwargs):
-#     if created:
-#         Profile.objects.create(user=instance)
-#     instance.profile.save()
-
-
 class AnnualRapport(models.Model):
     company = models.ForeignKey(Company, on_delete=models.CASCADE)
     taxonomy = models.FileField(blank=True, null=True)

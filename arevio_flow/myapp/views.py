@@ -3,7 +3,9 @@ from django.conf import settings
 from django.contrib.auth.mixins import LoginRequiredMixin
 
 class IndexTemplateView(LoginRequiredMixin, TemplateView):
-
+    """
+    Entry point view for the frontend.
+    """
     def get_template_names(self):
         # if settings.DEBUG:
         #     template_name = 'index-dev.html'
@@ -15,15 +17,12 @@ class IndexTemplateView(LoginRequiredMixin, TemplateView):
 
 from django.contrib.auth.models import User, Group
 from rest_framework import viewsets
-from . import serializers, models
-
+from . import serializers, models, permissions
 
 class UserViewSet(viewsets.ModelViewSet):
-    """
-    API endpoint that allows users to be viewed or edited.
-    """
     queryset = User.objects.all().order_by('-date_joined')
     serializer_class = serializers.UserSerializer
+    permission_classes = (permissions.UserViewPermission,)
 
     def get_object(self):
         if self.kwargs.get('pk') == 'me':
@@ -31,27 +30,15 @@ class UserViewSet(viewsets.ModelViewSet):
         return super().get_object()
 
 
-class GroupViewSet(viewsets.ModelViewSet):
-    """
-    API endpoint that allows groups to be viewed or edited.
-    """
-    queryset = Group.objects.all()
-    serializer_class = serializers.GroupSerializer
-
-
-# class ProfileViewSet(viewsets.ModelViewSet):
-#     queryset = models.Profile.objects.all()
-#     serializer_class = serializers.ProfileSerializer
-
-
 class CompanyViewSet(viewsets.ModelViewSet):
     queryset = models.Company.objects.all()
     serializer_class = serializers.CompanySerializer
-
+    permission_classes = (permissions.CompanyViewPermission,)
 
 class AnnualReportViewSet(viewsets.ModelViewSet):
     queryset = models.AnnualRapport.objects.all().order_by("-created_at")
     serializer_class = serializers.AnnualReportSerializer
+    permission_classes = (permissions.AnnualReportViewPermission,)
 
     def get_queryset(self):
         qs = self.queryset
@@ -59,18 +46,6 @@ class AnnualReportViewSet(viewsets.ModelViewSet):
         if company is not None:
             qs = qs.filter(company__pk=company)
         return qs
-
-
-from rest_framework.views import APIView
-from rest_framework.response import Response
-from django.shortcuts import get_object_or_404
-
-class CurrentUserView(APIView):
-    def get(self, request):
-        if (request.user.is_authenticated == False):
-            return Response({'error': 'not authenticated'})
-        serializer = serializers.UserSerializer(request.user, context={'request': request})
-        return Response(serializer.data)
 
 from django.contrib.auth import login, authenticate
 from django.contrib.auth.forms import UserCreationForm

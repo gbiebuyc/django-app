@@ -9,28 +9,20 @@ class CompanySerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
-# class ProfileSerializer(serializers.HyperlinkedModelSerializer):
-#     company = CompanySerializer(many=True)
-#     class Meta:
-#         model = Profile
-#         exclude = ['url', 'user']
-
-
 class UserSerializer(serializers.HyperlinkedModelSerializer):
-    # profile = ProfileSerializer()
+    # Companies are nested in UserSerializer to save HTTP requests.
     companies = serializers.SerializerMethodField()
     class Meta:
         model = User
         fields = ['url', 'username', 'email', 'groups', 'companies', 'is_staff']
 
     def get_companies(self, obj):
-        return CompanySerializer(obj.company_set.all(), many=True).data
-
-
-class GroupSerializer(serializers.HyperlinkedModelSerializer):
-    class Meta:
-        model = Group
-        fields = ['url', 'name']
+        # Admin can access all companies of the database
+        if obj.is_superuser:
+            companies = models.Company.objects.all()
+        else:
+            companies = obj.company_set.all()
+        return CompanySerializer(companies, many=True).data
 
 
 class AnnualReportSerializer(serializers.ModelSerializer):

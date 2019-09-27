@@ -15,7 +15,7 @@ class CompanyInline(admin.StackedInline):
 class MyUserAdmin(UserAdmin):
     inlines = (CompanyInline,)
     list_filter = ('company',) + UserAdmin.list_filter
-    list_display = ('username', 'get_user_company', 'is_staff')
+    list_display = ('username', 'get_user_company', 'is_superuser')
     fields = ('username',)
     fieldsets = None
     def get_user_company(self, obj):

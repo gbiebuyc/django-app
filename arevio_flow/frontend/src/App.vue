@@ -24,7 +24,7 @@ export default {
   methods: {
   },
   created() {
-    apiService('/api/me/')
+    apiService('/api/users/me/')
       .then(data => {
         this.userprofile = data;
       })
