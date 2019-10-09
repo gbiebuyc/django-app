@@ -1,6 +1,7 @@
 <template>
   <div>
-    <p v-if="loading">Loading...</p>
+    <h1 v-if="error" class="error">404 - Not Found</h1>
+    <p v-else-if="loading">Loading...</p>
     <div v-else>
       <h1>Reports for {{ companyName }}</h1>
       <div id="NewReportLinkBox" style="display:block; text-align:left;">
@@ -50,12 +51,15 @@ export default {
       list: null,
       companyId: null,
       companyName: null,
+      error: false,
     };
   },
   created() {
     this.companyId = this.$route.query.company;
     apiService(`/api/companies/${this.companyId}/`)
       .then(data => {
+        if (data === null)
+          return this.error = true;
         this.companyName = data.name;
       })
     this.fetchData();
@@ -64,6 +68,8 @@ export default {
     fetchData: function () {
       apiService(`/api/annualreports/?company=${this.companyId}`)
         .then(data => {
+          if (data === null)
+            return this.error = true;
           this.list = data.results;
         })
     },

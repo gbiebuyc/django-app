@@ -66,4 +66,8 @@ export default {
   left: 0px;
   width: 100%;
 }
+.error {
+  color: darkred;
+  text-align: center;
+}
 </style>

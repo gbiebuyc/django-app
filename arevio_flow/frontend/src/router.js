@@ -4,6 +4,7 @@ import Home from './views/Home.vue'
 import AnnualReport from './views/AnnualReport.vue'
 import Profile from './views/Profile.vue'
 import AnnualReportList from './views/AnnualReportList.vue'
+import NotFound from "./views/NotFound.vue"
 
 Vue.use(Router)
 
@@ -29,6 +30,11 @@ export default new Router({
       path: '/annualreportlist',
       name: 'annualreportlist',
       component: AnnualReportList,
+    },
+    {
+      path: "*",
+      name: "page-not-found",
+      component: NotFound
     },
   ]
 })

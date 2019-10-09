@@ -1,14 +1,10 @@
 import { CSRF_TOKEN } from "./csrf_token.js"
 
 function handleResponse(response) {
-  if (response.status === 204) {
-    return '';
-  } else if (response.status === 404) {
-    return null;
-  } else {
+  if (response.ok) {
     return response.json();
   }
-  
+  return null;
 }
 
 function apiService(endpoint, method, data) {
@@ -23,7 +19,6 @@ function apiService(endpoint, method, data) {
   };
   return fetch(endpoint, config)
            .then(handleResponse)
-           .catch(error => console.log(error))
 }
 
 export { apiService };
