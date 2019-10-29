@@ -41,11 +41,11 @@ class AnnualReportViewSet(viewsets.ModelViewSet):
     permission_classes = (permissions.AnnualReportViewPermission,)
 
     def get_queryset(self):
-        qs = self.queryset
-        company = self.request.query_params.get('company')
-        if company is not None:
-            qs = qs.filter(company__pk=company)
-        return qs
+        # Gets all reports from all companies the user has access to.
+        companies = models.Company.objects.all()
+        if not self.request.user.is_superuser:
+            companies = companies.filter(users=self.request.user)
+        return self.queryset.filter(company__in=companies)
 
 from django.contrib.auth import login, authenticate
 from django.contrib.auth.forms import UserCreationForm

@@ -1,5 +1,5 @@
 <template>
-  <div class="profile">
+  <div class="profile pt-3">
     <h1>your profile</h1>
     <p>{{ userprofile }}</p>
   </div>
