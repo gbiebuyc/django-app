@@ -21,9 +21,16 @@ class Company(models.Model):
     def __str__(self):
         return self.name
 
+class Taxonomy(models.Model):
+    name = models.CharField(max_length=200)
+    class Meta:
+        verbose_name_plural = 'Taxonomies'
+    def __str__(self):
+        return self.name
 
-class AnnualRapport(models.Model):
+class AnnualReport(models.Model):
+    name = models.CharField(max_length=200, blank=True, null=True)
     company = models.ForeignKey(Company, on_delete=models.CASCADE)
-    taxonomy = models.FileField(blank=True, null=True)
+    taxonomy = models.ForeignKey(Taxonomy, on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)

@@ -9,7 +9,7 @@
         <!-- Right aligned nav items -->
         <b-navbar-nav class="ml-auto">
 
-          <b-nav-item v-if="userprofile && userprofile.is_staff" href="/admin/">Admin site</b-nav-item>
+          <b-nav-item v-if="userdata && userdata.is_staff" href="/admin/">Admin site</b-nav-item>
 
           <b-nav-item-dropdown text="Lang" right>
             <b-dropdown-item href="#">EN</b-dropdown-item>
@@ -31,7 +31,7 @@
     </b-navbar>
     <div class="container p-0">
       <p v-if="loading" class="pt-3">Loading...</p>
-      <router-view v-else :userprofile="userprofile" :reports="reports" />
+      <router-view v-else :userdata="userdata" @fetchData="fetchData"/>
     </div>
   </div>
 </template>
@@ -41,22 +41,40 @@ import { apiService } from "@/common/api.service.js";
 export default {
   data() {
     return {
-      userprofile: null,
-      reports: null,
+      userdata: null,
     };
   },
   computed: {
     loading: function () {
-      return (this.userprofile === null) ? true : false;
+      return (this.userdata === null) ? true : false;
+    },
+  },
+  methods: {
+    fetchData: function () {
+      apiService('/userdata/')
+        .then(data => {
+          data.taxonomyNames = [];
+          data.taxonomies.forEach(item => {
+            data.taxonomyNames[item.id] = item.name;
+          });
+          if (!data.companies.length) {
+            data.companies = [{ value: null, text: 'Please select a company'},];
+          } else {
+            let tmp = [];
+            data.companies.forEach(item => {
+              tmp.push({
+                value: item,
+                text: item.name,
+              });
+            });
+            data.companies = tmp;
+          }
+          this.userdata = data;
+        })
     },
   },
   created() {
-    apiService('/api/users/me/')
-      .then(data => {
-        this.userprofile = data;
-      })
-    apiService('/api/annualreports/')
-      .then(data => this.reports = data.results)
+    this.fetchData();
   },
 };
 </script>

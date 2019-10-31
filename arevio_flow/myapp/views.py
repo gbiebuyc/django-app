@@ -1,6 +1,16 @@
 from django.views.generic.base import TemplateView
 from django.conf import settings
 from django.contrib.auth.mixins import LoginRequiredMixin
+from . import serializers, models
+from django.contrib.auth import login, authenticate
+from django.contrib.auth.forms import UserCreationForm
+from django.shortcuts import render, redirect
+from django.http import JsonResponse
+from django.contrib.auth.decorators import login_required
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework import status
+from rest_framework.exceptions import PermissionDenied
 
 class IndexTemplateView(LoginRequiredMixin, TemplateView):
     """
@@ -13,43 +23,6 @@ class IndexTemplateView(LoginRequiredMixin, TemplateView):
         #     template_name = 'index.html'
         template_name = 'index-dev.html'
         return template_name
-
-
-from django.contrib.auth.models import User, Group
-from rest_framework import viewsets
-from . import serializers, models, permissions
-
-class UserViewSet(viewsets.ModelViewSet):
-    queryset = User.objects.all().order_by('-date_joined')
-    serializer_class = serializers.UserSerializer
-    permission_classes = (permissions.UserViewPermission,)
-
-    def get_object(self):
-        if self.kwargs.get('pk') == 'me':
-            self.kwargs['pk'] = self.request.user.pk
-        return super().get_object()
-
-
-class CompanyViewSet(viewsets.ModelViewSet):
-    queryset = models.Company.objects.all()
-    serializer_class = serializers.CompanySerializer
-    permission_classes = (permissions.CompanyViewPermission,)
-
-class AnnualReportViewSet(viewsets.ModelViewSet):
-    queryset = models.AnnualRapport.objects.all().order_by("-created_at")
-    serializer_class = serializers.AnnualReportSerializer
-    permission_classes = (permissions.AnnualReportViewPermission,)
-
-    def get_queryset(self):
-        # Gets all reports from all companies the user has access to.
-        companies = models.Company.objects.all()
-        if not self.request.user.is_superuser:
-            companies = companies.filter(users=self.request.user)
-        return self.queryset.filter(company__in=companies)
-
-from django.contrib.auth import login, authenticate
-from django.contrib.auth.forms import UserCreationForm
-from django.shortcuts import render, redirect
 
 def signup(request):
     if request.method == 'POST':
@@ -64,3 +37,49 @@ def signup(request):
     else:
         form = UserCreationForm()
     return render(request, 'registration/signup.html', {'form': form})
+
+def get_company_qs(request):
+    if request.user.is_superuser:
+        return models.Company.objects.all()
+    return request.user.company_set.all()
+
+def get_annualreport_qs(request):
+    if request.user.is_superuser:
+        return models.AnnualReport.objects.all()
+    return models.AnnualReport.objects.filter(company__in=get_company_qs(request))
+
+@login_required
+def userdata(request):
+    data = serializers.UserSerializer(request.user).data
+    taxonomies = models.Taxonomy.objects.all()
+    companies = get_company_qs(request)
+    reports = get_annualreport_qs(request)
+    data['companies'] = serializers.CompanySerializer(companies, many=True).data
+    data['taxonomies'] = serializers.TaxonomySerializer(taxonomies, many=True).data
+    data['reports'] = serializers.AnnualReportSerializer(reports, many=True).data
+    return JsonResponse(data)
+
+class AnnualReportList(APIView):
+    def post(self, request):
+        serializer = serializers.AnnualReportSerializer(data=request.data)
+        if not serializer.is_valid():
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        if not serializer.validated_data['company'] in get_company_qs(request):
+            raise PermissionDenied
+        serializer.save()
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+class AnnualReportDetail(APIView):
+    def get_object(self, request, pk):
+        try:
+            return get_annualreport_qs(request).get(pk=pk)
+        except:
+            raise Http404
+
+    def delete(self, request, pk):
+        report = self.get_object(request, pk)
+        report.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+    # def get(self, request, pk):
+    #     report = self.get_object(request, pk)

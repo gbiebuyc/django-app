@@ -1,7 +1,9 @@
 from django.contrib.auth.models import User, Group
 from . import models
 from rest_framework import serializers
-
+from django.conf import settings
+import os
+import shutil
 
 class CompanySerializer(serializers.ModelSerializer):
     class Meta:
@@ -9,23 +11,27 @@ class CompanySerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
-class UserSerializer(serializers.HyperlinkedModelSerializer):
-    # Companies are nested in UserSerializer to save HTTP requests.
-    companies = serializers.SerializerMethodField()
+class TaxonomySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.Taxonomy
+        fields = '__all__'
+
+
+class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ['url', 'username', 'email', 'groups', 'companies', 'is_staff']
-
-    def get_companies(self, obj):
-        # Admin can access all companies of the database
-        if obj.is_superuser:
-            companies = models.Company.objects.all()
-        else:
-            companies = obj.company_set.all()
-        return CompanySerializer(companies, many=True).data
+        fields = ['username', 'email', 'groups', 'is_staff']
 
 
 class AnnualReportSerializer(serializers.ModelSerializer):
     class Meta:
-        model = models.AnnualRapport
+        model = models.AnnualReport
         fields = '__all__'
+
+    def create(self, validated_data):
+        obj = super().create(validated_data)
+        shutil.copy(
+            os.path.join(settings.BASE_DIR, 'xbrl_reports', 'empty-qrs.xbrl.original'),
+            os.path.join(settings.BASE_DIR, 'xbrl_reports', f'{obj.id}.xbrl'),
+        )
+        return obj

@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
 from django.contrib.auth.models import User, Group
-from .models import Company
+from . import models
 
 # class ProfileInline(admin.StackedInline):
 #     model = Profile
@@ -9,7 +9,7 @@ from .models import Company
 #     verbose_name_plural = 'Profile'
 
 class CompanyInline(admin.StackedInline):
-    model = Company.users.through
+    model = models.Company.users.through
     extra = 1
 
 class MyUserAdmin(UserAdmin):
@@ -23,10 +23,11 @@ class MyUserAdmin(UserAdmin):
     get_user_company.short_description = "User company(ies)"
 
 class CompanyAdmin(admin.ModelAdmin):
-    model = Company
+    model = models.Company
     filter_horizontal = ('users',)
 
 admin.site.unregister(User)
 admin.site.unregister(Group)
 admin.site.register(User, MyUserAdmin)
-admin.site.register(Company, CompanyAdmin)
+admin.site.register(models.Company, CompanyAdmin)
+admin.site.register(models.Taxonomy)

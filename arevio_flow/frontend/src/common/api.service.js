@@ -1,7 +1,7 @@
 import { CSRF_TOKEN } from "./csrf_token.js"
 
 function handleResponse(response) {
-  if (response.ok) {
+  if (response.ok && response.status != 204) {
     return response.json();
   }
   return null;

@@ -4,6 +4,7 @@
 webpack-stats.json
 arevio_flow/static/
 package-lock.json
+*.xbrl
 
 # Created by https://www.gitignore.io/api/vim,node,linux,python,django
 # Edit at https://www.gitignore.io/?templates=vim,node,linux,python,django
