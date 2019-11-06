@@ -12,10 +12,10 @@
           <b-nav-item v-if="userdata && userdata.is_staff" href="/admin/">Admin site</b-nav-item>
 
           <b-nav-item-dropdown text="Lang" right>
-            <b-dropdown-item href="#">EN</b-dropdown-item>
-            <b-dropdown-item href="#">ES</b-dropdown-item>
-            <b-dropdown-item href="#">RU</b-dropdown-item>
-            <b-dropdown-item href="#">FA</b-dropdown-item>
+            <b-dropdown-item href="#" v-b-modal.notyetimplemented>EN</b-dropdown-item>
+            <b-dropdown-item href="#" v-b-modal.notyetimplemented>ES</b-dropdown-item>
+            <b-dropdown-item href="#" v-b-modal.notyetimplemented>RU</b-dropdown-item>
+            <b-dropdown-item href="#" v-b-modal.notyetimplemented>FA</b-dropdown-item>
           </b-nav-item-dropdown>
 
           <b-nav-item-dropdown right>
@@ -33,11 +33,12 @@
       <p v-if="loading" class="pt-3">Loading...</p>
       <router-view v-else :userdata="userdata" @fetchData="fetchData"/>
     </div>
+    <b-modal id="notyetimplemented" title=":(" centered ok-only>not yet implemented</b-modal>
   </div>
 </template>
 
 <script>
-import { apiService } from "@/common/api.service.js";
+import { CSRF_TOKEN } from "@/common/csrf_token.js";
 export default {
   data() {
     return {
@@ -51,8 +52,12 @@ export default {
   },
   methods: {
     fetchData: function () {
-      apiService('/userdata/')
-        .then(data => {
+      fetch('/userdata/', {
+        method: 'GET',
+        headers: {'X-CSRFTOKEN': CSRF_TOKEN},
+      }).then(resp => {
+        return resp.json();
+      }).then(data => {
           data.taxonomyNames = [];
           data.taxonomies.forEach(item => {
             data.taxonomyNames[item.id] = item.name;

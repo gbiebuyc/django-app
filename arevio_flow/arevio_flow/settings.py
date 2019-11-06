@@ -153,3 +153,7 @@ CRISPY_TEMPLATE_PACK = "bootstrap4"
 
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 MEDIA_URL = '/media/'
+
+XBRL_DIR = os.path.join(BASE_DIR, 'xbrl_reports')
+
+ARELLE_HOME = '/usr/share/arelle'

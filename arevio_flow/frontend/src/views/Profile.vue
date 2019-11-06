@@ -1,6 +1,6 @@
 <template>
   <div class="profile pt-3">
-    <b-card img-src="https://placekitten.com/300/300" img-alt="Card image" img-left class="mb-3">
+    <b-card img-src="https://placekitten.com/300/300" img-alt="Card image" img-left class="mt-3">
       <b-card-text>
         <h1>your profile</h1>
         <div class="row mt-3" >
