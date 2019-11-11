@@ -23,7 +23,7 @@ class Company(models.Model):
 
 class Taxonomy(models.Model):
     name = models.CharField(max_length=200)
-    # xbrl_template = 
+    xbrl_template = models.FileField()
     arelleCmdLine_options = models.TextField()
     class Meta:
         verbose_name_plural = 'Taxonomies'
@@ -36,4 +36,4 @@ class AnnualReport(models.Model):
     taxonomy = models.ForeignKey(Taxonomy, on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-    # updated_by = models.ForeignKey(User, on_delete=models.CASCADE)
+    # updated_by_user = models.ForeignKey(User, on_delete=models.CASCADE)

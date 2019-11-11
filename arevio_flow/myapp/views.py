@@ -69,10 +69,10 @@ class AnnualReportList(APIView):
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         if not serializer.validated_data['company'] in get_company_qs(request):
             raise PermissionDenied
-        serializer.save()
+        new_report = serializer.save()
         shutil.copy(
-            os.path.join(settings.XBRL_DIR, 'empty-qrs.xbrl.original'),
-            os.path.join(settings.XBRL_DIR, f'{serializer.data["id"]}.xbrl'),
+            new_report.taxonomy.xbrl_template.path,
+            os.path.join(settings.XBRL_DIR, f'{new_report.id}.xbrl'),
         )
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
@@ -144,6 +144,6 @@ class AnnualReportDetail(APIView):
         except:
             raise PermissionDenied
         report = self.get_object(request, pk)
-        report.name = newName;
+        report.name = newName
         report.save()
         return HttpResponse('OK')
