@@ -137,3 +137,13 @@ class AnnualReportDetail(APIView):
         response['success'] = success
         response['arevio_output'] = arevio_output.decode()
         return JsonResponse(response)
+
+    def put(self, request, pk):
+        try:
+            newName = request.POST.get('newName')
+        except:
+            raise PermissionDenied
+        report = self.get_object(request, pk)
+        report.name = newName;
+        report.save()
+        return HttpResponse('OK')

@@ -36,8 +36,11 @@
         <b-button size="sm" class="mr-2 report-action-btn" @click="onClickUploadReport(row.item)" v-b-tooltip.hover title="Upload">
           <font-awesome-icon icon="file-upload" />
         </b-button>
-        <b-button size="sm" class="mr-2 report-action-btn" v-b-modal.notyetimplemented v-b-tooltip.hover title="Preview">
+        <b-button size="sm" class="mr-2 report-action-btn" v-b-modal.notyetimplemented v-b-tooltip.hover title="HTML Preview">
           <font-awesome-icon icon="eye" />
+        </b-button>
+        <b-button size="sm" class="mr-2 report-action-btn" @click="onClickRename(row.item)" v-b-tooltip.hover title="Rename">
+          <font-awesome-icon icon="pen" />
         </b-button>
       </template>
     </b-table>
@@ -48,7 +51,7 @@
       @ok="newReport"
       @shown="initNewReportModal"
     > <p>Name:
-      <b-form-input v-model="newReportName" ref="focusThis" placeholder="Enter the report name"></b-form-input></p>
+      <b-form-input v-model="newReportName" placeholder="Enter the report name" autofocus></b-form-input></p>
       <p>Taxonomy:<br>
       <b-form-select
         v-model="newReportTaxonomy"
@@ -87,6 +90,14 @@
       @input="onFileInput"
       class="d-none"
     ></b-form-file>
+
+    <b-modal id="rename"
+      @ok="onRename"
+      title="Rename"
+      :ok-disabled="newReportName == ''"
+      centered
+    > <b-form-input v-model="newReportName" placeholder="Enter a new name" autofocus></b-form-input>
+    </b-modal>
 
   </div>
 </template>
@@ -132,7 +143,7 @@ export default {
       newReportTaxonomy: this.userdata.taxonomies[0].id,
       selectedRows: [],
       file: null,
-      uploadId: null,
+      clickedReportId: null,
       uploadLog: null,
       downloading: 0,
     }
@@ -163,7 +174,6 @@ export default {
       });
     },
     initNewReportModal() {
-      this.$refs.focusThis.focus();
       this.newReportName = "";
     },
     onClickDownloadReport(item) {
@@ -188,7 +198,7 @@ export default {
       this.$root.$emit('bv::hide::tooltip')
       this.file = null;
       this.uploadLog = null;
-      this.uploadId = item.id;
+      this.clickedReportId = item.id;
       document.getElementById('myFileInput').click();
     },
     onFileInput(file) {
@@ -197,7 +207,7 @@ export default {
       this.$bvModal.show('upload-spinner-modal');
       let formData = new FormData();
       formData.append('excel_file', file);
-      fetch(`/annualreports/${this.uploadId}/`, {
+      fetch(`/annualreports/${this.clickedReportId}/`, {
         method: 'POST',
         headers: {'X-CSRFTOKEN': CSRF_TOKEN,},
         body: formData,
@@ -209,6 +219,24 @@ export default {
         this.$bvModal.show('upload-done-modal');
         this.$emit('fetchData');
       });
+    },
+    onClickRename(item) {
+      this.newReportName = '';
+      this.clickedReportId = item.id;
+      this.$bvModal.show('rename');
+    },
+    onRename() {
+      let body = new URLSearchParams();
+      body.append('newName', this.newReportName);
+      fetch(`/annualreports/${this.clickedReportId}/`, {
+        method: "PUT",
+        body: body,
+        headers: {
+          'X-CSRFTOKEN': CSRF_TOKEN,
+          'Content-Type': 'application/x-www-form-urlencoded'},
+        }).then(() => {
+          this.$emit('fetchData')
+        });
     },
   },
   mounted() {
