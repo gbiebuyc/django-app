@@ -25,16 +25,20 @@
       :fields="fields"
       :filter="filter"
       :filter-included-fields="filterIncludedFields"
-      selectable
+      :selectable="downloading ? false : true"
       select-mode="multi"
       @row-selected="onRowSelected"
     > <template v-slot:cell(actions)="row">
-        <b-button size="sm" class="mr-1" @click="onClickDownloadReport(row.item)" :disabled="row.item.downloading">
-          <span v-if="row.item.downloading"><b-spinner small></b-spinner> Downloading...</span>
-          <span v-else> Download</span>
+        <b-button size="sm" class="mr-2 report-action-btn" @click="onClickDownloadReport(row.item)" v-b-tooltip.hover title="Download" :disabled="row.item.downloading">
+          <b-spinner v-if="row.item.downloading" small></b-spinner>
+          <font-awesome-icon v-else icon="file-download" />
         </b-button>
-        <b-button size="sm" class="mr-1" @click="onClickUploadReport(row.item)"> Upload </b-button>
-        <b-button size="sm" class="mr-1" v-b-modal.notyetimplemented> Preview </b-button>
+        <b-button size="sm" class="mr-2 report-action-btn" @click="onClickUploadReport(row.item)" v-b-tooltip.hover title="Upload">
+          <font-awesome-icon icon="file-upload" />
+        </b-button>
+        <b-button size="sm" class="mr-2 report-action-btn" v-b-modal.notyetimplemented v-b-tooltip.hover title="Preview">
+          <font-awesome-icon icon="eye" />
+        </b-button>
       </template>
     </b-table>
 
@@ -130,6 +134,7 @@ export default {
       file: null,
       uploadId: null,
       uploadLog: null,
+      downloading: 0,
     }
   },
   methods: {
@@ -162,7 +167,10 @@ export default {
       this.newReportName = "";
     },
     onClickDownloadReport(item) {
+      this.$root.$emit('bv::hide::tooltip')
       item.downloading = true;
+      this.downloading++;
+      this.$refs.reportsTable.clearSelected()
       this.$refs.reportsTable.refresh()
       fetch(`/annualreports/${item.id}/`, {
           method: "GET",
@@ -172,10 +180,12 @@ export default {
         }).then(blob => {
           download(blob, `${item.name}.xlsx`);
           item.downloading = false;
+          this.downloading--;
           this.$refs.reportsTable.refresh()
         });
     },
     onClickUploadReport(item) {
+      this.$root.$emit('bv::hide::tooltip')
       this.file = null;
       this.uploadLog = null;
       this.uploadId = item.id;
@@ -221,5 +231,8 @@ export default {
   position: sticky;
   bottom: 30px;
   left: 100%;
+}
+.report-action-btn {
+  width: 40px;
 }
 </style>
