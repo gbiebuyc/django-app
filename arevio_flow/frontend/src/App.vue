@@ -9,9 +9,12 @@
         <!-- Right aligned nav items -->
         <b-navbar-nav class="ml-auto">
 
-          <b-nav-item v-if="userdata && userdata.is_staff" href="/admin/">Admin site</b-nav-item>
+          <b-nav-item v-if="userdata && userdata.is_staff" href="/admin/" v-b-tooltip.hover title="Admin site"><font-awesome-icon icon="user-cog" /></b-nav-item>
 
-          <b-nav-item-dropdown text="Lang" right>
+          <b-nav-item-dropdown right>
+            <template v-slot:button-content>
+              <font-awesome-icon icon="language" />
+            </template>
             <b-dropdown-item href="#" v-b-modal.notyetimplemented>EN</b-dropdown-item>
             <b-dropdown-item href="#" v-b-modal.notyetimplemented>ES</b-dropdown-item>
             <b-dropdown-item href="#" v-b-modal.notyetimplemented>RU</b-dropdown-item>
@@ -21,7 +24,8 @@
           <b-nav-item-dropdown right>
             <!-- Using 'button-content' slot -->
             <template v-slot:button-content>
-              <em>User</em>
+              <font-awesome-icon icon="user-circle" />
+              <span style="font-size: 1rem; position: relative; bottom: 3px"> {{ userdata ? userdata.username : '' }} </span>
             </template>
             <b-dropdown-item to="/profile">Profile</b-dropdown-item>
             <b-dropdown-item href="/accounts/logout/">Sign Out</b-dropdown-item>
@@ -33,7 +37,7 @@
       <p v-if="loading" class="pt-3">Loading...</p>
       <router-view v-else :userdata="userdata" @fetchData="fetchData"/>
     </div>
-    <b-modal id="notyetimplemented" title=":(" centered ok-only>not yet implemented</b-modal>
+    <b-modal id="notyetimplemented" title=":(" centered ok-only>Not yet implemented</b-modal>
   </div>
 </template>
 
@@ -88,5 +92,9 @@ export default {
 .error {
   color: darkred;
   text-align: center;
+}
+nav > div > ul > li > a {
+  font-size: 1.3rem;
+  margin: 0 5px;
 }
 </style>
