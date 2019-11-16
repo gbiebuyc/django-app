@@ -157,3 +157,4 @@ MEDIA_URL = '/media/'
 XBRL_DIR = os.path.join(BASE_DIR, 'xbrl_reports')
 
 ARELLE_HOME = '/usr/share/arelle'
+ARELLE_LOGFILE = os.path.join(XBRL_DIR, 'logfile.xml')

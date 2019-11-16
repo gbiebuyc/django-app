@@ -13,7 +13,7 @@ from rest_framework import status
 from rest_framework.exceptions import PermissionDenied
 from django.conf import settings
 from datetime import datetime
-import os, shutil, subprocess
+import os, shutil
 
 class IndexTemplateView(LoginRequiredMixin, TemplateView):
     """
@@ -68,6 +68,17 @@ def update_and_save_report(report, request):
     report.save()
     return report
 
+def rm(file):
+    try: os.remove(file)
+    except: pass
+
+def get_arelle_command(report, xbrl_file):
+    return " ".join([
+        os.path.join(settings.ARELLE_HOME, 'arelleCmdLine'),
+        report.taxonomy.arelleCmdLine_options.replace(
+            "%ARELLE_HOME%", settings.ARELLE_HOME),
+        '-f', xbrl_file])
+
 class AnnualReportList(APIView):
     def post(self, request):
         serializer = serializers.AnnualReportSerializer(data=request.data)
@@ -94,27 +105,16 @@ class AnnualReportDetail(APIView):
         report = self.get_object(request, pk)
         xbrl_file = os.path.join(settings.XBRL_DIR, f'{report.id}.xbrl')
         excel_file = os.path.join(settings.XBRL_DIR, f'{report.id}.xlsx')
-        try:
-            os.remove(xbrl_file)
-            os.remove(excel_file)
-        except:
-            pass
+        rm(xbrl_file)
+        rm(excel_file)
         report.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
-
-    def get_arelle_command(self, report, xbrl_file):
-        cmd = os.path.join(settings.ARELLE_HOME, 'arelleCmdLine')
-        cmd += ' '
-        cmd += report.taxonomy.arelleCmdLine_options.replace(
-            "%ARELLE_HOME%", settings.ARELLE_HOME)
-        cmd += ' -f ' + xbrl_file
-        return cmd
 
     def get(self, request, pk):
         report = self.get_object(request, pk)
         xbrl_file = os.path.join(settings.XBRL_DIR, f'{report.id}.xbrl')
         excel_file = os.path.join(settings.XBRL_DIR, f'{report.id}.xlsx')
-        cmd = self.get_arelle_command(report, xbrl_file)
+        cmd = get_arelle_command(report, xbrl_file)
         cmd += ' --save-XLSX-rw=' + excel_file
         os.system(cmd)
         with open(excel_file, 'rb') as f:
@@ -132,16 +132,19 @@ class AnnualReportDetail(APIView):
         time1 = os.path.getmtime(xbrl_file)
         with open(excel_file, 'wb') as f:
             f.write(request.FILES['excel_file'].read())
-        cmd = self.get_arelle_command(report, xbrl_file)
+        rm(settings.ARELLE_LOGFILE)
+        cmd = get_arelle_command(report, xbrl_file)
         cmd += ' --load-XLSX=' + excel_file
-        arevio_output = subprocess.check_output(cmd, shell=True)
+        cmd += ' --logFile=' + settings.ARELLE_LOGFILE
+        os.system(cmd)
         time2 = os.path.getmtime(xbrl_file)
         success = time1 != time2    # Arevio modified the file means success
         if success:
             update_and_save_report(report, request)
         response = {}
         response['success'] = success
-        response['arevio_output'] = arevio_output.decode()
+        with open(settings.ARELLE_LOGFILE, 'r') as f:
+            response['log'] = f.read()
         return JsonResponse(response)
 
     def put(self, request, pk):

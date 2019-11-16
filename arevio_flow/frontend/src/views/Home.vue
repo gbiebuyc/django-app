@@ -90,12 +90,17 @@
     </b-modal>
 
     <b-modal id='upload-done-modal'
-      :title="'Import ' + (uploadLog && uploadLog.success ? 'success' : 'fail')"
+      :title="uploadModalTitle"
       centered
-      size="lg"
+      :size="(uploadLog && uploadLog.errors.length) ? 'lg' : 'md'"
       ok-only
-    > <h6>Arevio output:</h6>
-      {{ uploadLog ? uploadLog.arevio_output : '' }}
+      scrollable
+    > <div v-if="uploadLog && (uploadLog.errors.length || !uploadLog.success)">
+        <div v-for="error in uploadLog.errors">
+          <span class="font-weight-bold">{{ error.level }}: </span> {{ error.msg }}
+        </div>
+      </div>
+      <p v-else>Congratulations</p>
     </b-modal>
 
     <b-form-file id="myFileInput"
@@ -106,7 +111,7 @@
 
     <b-modal id="rename"
       @ok="onRename"
-      title="Rename"
+      :title='`Rename "${clickedReport && clickedReport.name}"`'
       :ok-disabled="newReportName == ''"
       centered
     > <b-form-input v-model="newReportName" placeholder="Enter a new name" autofocus></b-form-input>
@@ -128,6 +133,15 @@ export default {
       } catch (err) {
         return null;
       }
+    },
+    uploadModalTitle() {
+      if (this.uploadLog == null)
+        return '';
+      if (this.uploadLog.success == false)
+        return 'Import failed';
+      if (this.uploadLog.errors.length > 0)
+        return 'Import succeeded with errors';
+      return 'Import succeeded without any errors';
     },
   },
   data() {
@@ -161,6 +175,7 @@ export default {
       selectedRows: [],
       file: null,
       clickedReport: null,
+      uploadReportId: null,
       uploadLog: null,
     }
   },
@@ -216,7 +231,7 @@ export default {
       this.$root.$emit('bv::hide::tooltip')
       this.file = null;
       this.uploadLog = null;
-      this.clickedReport = item;
+      this.uploadReportId = item.id;
       document.getElementById('myFileInput').click();
     },
     onFileInput(file) {
@@ -225,13 +240,24 @@ export default {
       this.$bvModal.show('spinner-modal');
       let formData = new FormData();
       formData.append('excel_file', file);
-      fetch(`/annualreports/${this.clickedReport.id}/`, {
+      fetch(`/annualreports/${this.uploadReportId}/`, {
         method: 'POST',
         headers: {'X-CSRFTOKEN': CSRF_TOKEN,},
         body: formData,
       }).then(resp => {
         return resp.json();
       }).then(json => {
+        let parser = new DOMParser();
+        let xmlDoc = parser.parseFromString(json.log,"text/xml");
+        json.errors = [];
+        for (let entry of xmlDoc.getElementsByTagName('entry')) {
+          if (entry.attributes.level.value != "info") {
+            json.errors.push({
+              level: entry.attributes.level.value,
+              msg: entry.textContent,
+            });
+          }
+        }
         this.uploadLog = json;
         this.$bvModal.hide('spinner-modal');
         this.$bvModal.show('upload-done-modal');
