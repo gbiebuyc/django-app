@@ -149,6 +149,10 @@ export default {
           sortable: true,
           formatter: value => new Date(value).toLocaleString(),
         },
+        {
+          key: 'updated_by_user',
+          sortable: true,
+        },
         'actions',
       ],
       filterIncludedFields: ['company'],

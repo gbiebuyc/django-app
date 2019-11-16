@@ -36,4 +36,4 @@ class AnnualReport(models.Model):
     taxonomy = models.ForeignKey(Taxonomy, on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-    # updated_by_user = models.ForeignKey(User, on_delete=models.CASCADE)
+    updated_by_user = models.ForeignKey(User, on_delete=models.SET_NULL, blank=True, null=True)

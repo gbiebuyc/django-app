@@ -62,6 +62,12 @@ def userdata(request):
     data['reports'] = serializers.AnnualReportSerializer(reports, many=True).data
     return JsonResponse(data)
 
+def update_and_save_report(report, request):
+    report.updated_by_user = request.user
+    report.updated_at = datetime.now()
+    report.save()
+    return report
+
 class AnnualReportList(APIView):
     def post(self, request):
         serializer = serializers.AnnualReportSerializer(data=request.data)
@@ -70,6 +76,7 @@ class AnnualReportList(APIView):
         if not serializer.validated_data['company'] in get_company_qs(request):
             raise PermissionDenied
         new_report = serializer.save()
+        new_report = update_and_save_report(new_report, request)
         shutil.copy(
             new_report.taxonomy.xbrl_template.path,
             os.path.join(settings.XBRL_DIR, f'{new_report.id}.xbrl'),
@@ -131,8 +138,7 @@ class AnnualReportDetail(APIView):
         time2 = os.path.getmtime(xbrl_file)
         success = time1 != time2    # Arevio modified the file means success
         if success:
-            report.updated_at = datetime.now()
-            report.save()
+            update_and_save_report(report, request)
         response = {}
         response['success'] = success
         response['arevio_output'] = arevio_output.decode()
@@ -145,5 +151,5 @@ class AnnualReportDetail(APIView):
             raise PermissionDenied
         report = self.get_object(request, pk)
         report.name = newName
-        report.save()
+        update_and_save_report(report, request)
         return HttpResponse('OK')

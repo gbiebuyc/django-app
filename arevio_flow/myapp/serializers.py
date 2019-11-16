@@ -21,6 +21,13 @@ class UserSerializer(serializers.ModelSerializer):
 
 
 class AnnualReportSerializer(serializers.ModelSerializer):
+    updated_by_user = serializers.SerializerMethodField()
+
     class Meta:
         model = models.AnnualReport
         fields = '__all__'
+
+    def get_updated_by_user(self, obj):
+        if not obj.updated_by_user:
+            return 'n/a'
+        return obj.updated_by_user.username
