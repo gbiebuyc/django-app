@@ -33,7 +33,7 @@
       @row-selected="onRowSelected"
       small
     > <template v-slot:cell(actions)="row">
-        <b-button variant="light" pill class="mr-2 report-action-btn text-secondary" @click="onClickDownloadReport(row.item)" v-b-tooltip.hover title="Download">
+        <b-button variant="light" pill class="mr-2 report-action-btn text-secondary" @click="onClickDownloadReport(row.item, 'xlsx')" v-b-tooltip.hover title="Download">
           <font-awesome-icon icon="file-download" />
         </b-button>
         <b-button variant="light" pill class="mr-2 report-action-btn text-secondary" @click="onClickUploadReport(row.item)" v-b-tooltip.hover title="Upload">
@@ -47,6 +47,9 @@
         </b-button>
         <b-button variant="light" pill class="mr-2 report-action-btn text-secondary" @click="onClickDeleteReport(row.item)" v-b-tooltip.hover title="Delete">
           <font-awesome-icon icon="trash-alt" />
+        </b-button>
+        <b-button variant="light" pill class="mr-2 report-action-btn text-secondary" @click="onClickDownloadReport(row.item, 'xbrl')" v-b-tooltip.hover title="Download XBRL">
+          <span><font-awesome-icon icon="file-excel" /><span style="position: relative; top: 1px;">brl</span></span>
         </b-button>
       </template>
     </b-table>
@@ -223,9 +226,9 @@ export default {
     initNewReportModal() {
       this.newReportName = "";
     },
-    onClickDownloadReport(item) {
+    onClickDownloadReport(item, file_type) {
       this.$bvModal.show('spinner-modal');
-      fetch(`/annualreports/${item.id}/`, {
+      fetch(`/annualreports/${item.id}/?file_type=${file_type}`, {
           method: "GET",
           headers: {'X-CSRFTOKEN': CSRF_TOKEN},
         }).then(response => {
@@ -233,7 +236,7 @@ export default {
           return response.blob();
         }).then(blob => {
           this.$bvModal.hide('spinner-modal');
-          download(blob, `${item.name}.xlsx`);
+          download(blob, `${item.name}.${file_type}`);
         }).catch(error => this.$emit('handleError', error));
     },
     onClickUploadReport(item) {
@@ -314,7 +317,7 @@ export default {
   height: 40px;
   width: 40px;
 }
-td > button > svg {
+td > button > svg, td > button > span {
     margin-left: -100%;
     margin-right: -100%;
 }

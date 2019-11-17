@@ -114,10 +114,12 @@ class AnnualReportDetail(APIView):
         report = self.get_object(request, pk)
         xbrl_file = os.path.join(settings.XBRL_DIR, f'{report.id}.xbrl')
         excel_file = os.path.join(settings.XBRL_DIR, f'{report.id}.xlsx')
-        cmd = get_arelle_command(report, xbrl_file)
-        cmd += ' --save-XLSX-rw=' + excel_file
-        os.system(cmd)
-        with open(excel_file, 'rb') as f:
+        file_type = request.GET.get('file_type', 'xlsx')
+        if file_type == 'xlsx':
+            cmd = get_arelle_command(report, xbrl_file)
+            cmd += ' --save-XLSX-rw=' + excel_file
+            os.system(cmd)
+        with open(excel_file if file_type == 'xlsx' else xbrl_file, 'rb') as f:
             response = HttpResponse(f.read(), content_type="application/vnd.ms-excel")
             response['Content-Disposition'] = f'inline; filename={report.name}.xlsx'
             return response
