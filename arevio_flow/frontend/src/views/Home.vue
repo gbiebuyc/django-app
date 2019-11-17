@@ -107,6 +107,7 @@
       v-model="file"
       @input="onFileInput"
       class="d-none"
+      ref="myFileInput"
     ></b-form-file>
 
     <b-modal id="rename"
@@ -228,8 +229,6 @@ export default {
         });
     },
     onClickUploadReport(item) {
-      this.$root.$emit('bv::hide::tooltip')
-      this.file = null;
       this.uploadLog = null;
       this.uploadReportId = item.id;
       document.getElementById('myFileInput').click();
@@ -237,6 +236,7 @@ export default {
     onFileInput(file) {
       if (file === null)
         return;
+      this.$refs.myFileInput.reset();
       this.$bvModal.show('spinner-modal');
       let formData = new FormData();
       formData.append('excel_file', file);
