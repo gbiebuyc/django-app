@@ -5,7 +5,7 @@ from . import serializers, models
 from django.contrib.auth import login, authenticate
 from django.contrib.auth.forms import UserCreationForm
 from django.shortcuts import render, redirect
-from django.http import JsonResponse, HttpResponse, Http404
+from django.http import JsonResponse, HttpResponse, Http404, HttpResponseBadRequest
 from django.contrib.auth.decorators import login_required
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -128,7 +128,7 @@ class AnnualReportDetail(APIView):
         xbrl_file = os.path.join(settings.XBRL_DIR, f'{report.id}.xbrl')
         excel_file = os.path.join(settings.XBRL_DIR, f'{report.id}.xlsx')
         if request.FILES['excel_file'].size > 25000000:
-            return HttpResponse('File size bigger than 25MB!')
+            return HttpResponseBadRequest('File size bigger than 25MB!')
         time1 = os.path.getmtime(xbrl_file)
         with open(excel_file, 'wb') as f:
             f.write(request.FILES['excel_file'].read())

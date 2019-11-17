@@ -35,7 +35,7 @@
     </b-navbar>
     <div class="container p-0">
       <p v-if="loading" class="pt-3">Loading...</p>
-      <router-view v-else :userdata="userdata" @fetchData="fetchData"/>
+      <router-view v-else :userdata="userdata" @fetchData="fetchData" @handleError="handleError"/>
     </div>
     <div class="container p-0 footer">
       <div style="display: flex; flex-direction: column; align-items: flex-end; height: 100%">
@@ -44,7 +44,17 @@
         </div>
       </div>
     </div>
+
     <b-modal id="notyetimplemented" title=":(" centered ok-only>Not yet implemented</b-modal>
+
+    <b-modal id="error"
+      :title="error && error.name"
+      header-text-variant="danger"
+      centered
+      hide-footer
+    > <p>{{ error && error.message }}</p>
+    </b-modal>
+
   </div>
 </template>
 
@@ -54,6 +64,7 @@ export default {
   data() {
     return {
       userdata: null,
+      error: null,
     };
   },
   computed: {
@@ -66,8 +77,9 @@ export default {
       fetch('/userdata/', {
         method: 'GET',
         headers: {'X-CSRFTOKEN': CSRF_TOKEN},
-      }).then(resp => {
-        return resp.json();
+      }).then(response => {
+        if (!response.ok) throw response;
+        return response.json();
       }).then(data => {
           data.taxonomyNames = [];
           data.taxonomies.forEach(item => {
@@ -86,7 +98,30 @@ export default {
             data.companies = tmp;
           }
           this.userdata = data;
-        })
+        }).catch(error => this.handleError(error));
+    },
+    handleError(error) {
+      if (error instanceof Response) {
+        error.text().then(text => {
+          this.error = {
+            name: `HTTP ${error.status} ${error.statusText}`,
+            message: text,
+          };
+          this.$bvModal.hide('spinner-modal');
+          this.$bvModal.show('error');
+        });
+      } else {
+        if (error.message == 'Failed to fetch') {
+          this.error = {
+            name: 'Network error',
+            message: 'Check your internet connection.'
+          };
+        } else {
+          this.error = error;
+        }
+        this.$bvModal.hide('spinner-modal');
+        this.$bvModal.show('error');
+      }
     },
   },
   created() {

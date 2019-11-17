@@ -71,6 +71,7 @@
     </b-modal>
 
     <b-modal id="delete-confirm" title="Delete report" @ok="DeleteReports" ok-title="Yes" cancel-title="No"
+      centered
       hide-header-close auto-focus-button="ok"
       header-bg-variant="light"
     >
@@ -194,7 +195,10 @@ export default {
         headers: {
           'X-CSRFTOKEN': CSRF_TOKEN,
           'Content-Type': 'application/json'},
-        }).then(() => this.$emit('fetchData'))
+        }).then(response => {
+          if (!response.ok) throw response;
+          this.$emit('fetchData');
+        }).catch(error => this.$emit('handleError', error));
     },
     onClickDeleteReport(item) {
       this.clickedReport = item;
@@ -210,7 +214,10 @@ export default {
         fetch(`/annualreports/${row.id}/`, {
           method: "DELETE",
           headers: {'X-CSRFTOKEN': CSRF_TOKEN},
-        }).then(() => this.$emit('fetchData'))
+        }).then(response => {
+          if (!response.ok) throw response;
+          this.$emit('fetchData')
+        }).catch(error => this.$emit('handleError', error));
       });
     },
     initNewReportModal() {
@@ -221,12 +228,13 @@ export default {
       fetch(`/annualreports/${item.id}/`, {
           method: "GET",
           headers: {'X-CSRFTOKEN': CSRF_TOKEN},
-        }).then(resp => {
-          return resp.blob();
+        }).then(response => {
+          if (!response.ok) throw response;
+          return response.blob();
         }).then(blob => {
           this.$bvModal.hide('spinner-modal');
           download(blob, `${item.name}.xlsx`);
-        });
+        }).catch(error => this.$emit('handleError', error));
     },
     onClickUploadReport(item) {
       this.uploadLog = null;
@@ -244,8 +252,9 @@ export default {
         method: 'POST',
         headers: {'X-CSRFTOKEN': CSRF_TOKEN,},
         body: formData,
-      }).then(resp => {
-        return resp.json();
+      }).then(response => {
+        if (!response.ok) throw response;
+        return response.json();
       }).then(json => {
         let parser = new DOMParser();
         let xmlDoc = parser.parseFromString(json.log,"text/xml");
@@ -262,7 +271,7 @@ export default {
         this.$bvModal.hide('spinner-modal');
         this.$bvModal.show('upload-done-modal');
         this.$emit('fetchData');
-      });
+      }).catch(error => this.$emit('handleError', error));
     },
     onClickRename(item) {
       this.newReportName = '';
@@ -278,9 +287,10 @@ export default {
         headers: {
           'X-CSRFTOKEN': CSRF_TOKEN,
           'Content-Type': 'application/x-www-form-urlencoded'},
-        }).then(() => {
+        }).then(response => {
+          if (!response.ok) throw response;
           this.$emit('fetchData')
-        });
+        }).catch(error => this.$emit('handleError', error));
     },
   },
   mounted() {
