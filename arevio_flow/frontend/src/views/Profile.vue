@@ -1,8 +1,8 @@
 <template>
   <div class="profile pt-3">
-    <b-card img-src="https://placekitten.com/300/300" img-alt="Card image" img-left class="mt-3">
+    <b-card img-src="https://picsum.photos/id/20/400/400" img-alt="Card image" img-left img-height="200px" class="mt-3">
       <b-card-text>
-        <h1>your profile</h1>
+        <h1>User profile</h1>
         <div class="row mt-3" >
           <div class="col-2" > <h6> Username: </h6> </div>
           <div class="col" > {{ userdata.username }} </div>
