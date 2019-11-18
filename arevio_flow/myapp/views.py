@@ -1,9 +1,8 @@
 from django.views.generic.base import TemplateView
 from django.conf import settings
 from django.contrib.auth.mixins import LoginRequiredMixin
-from . import serializers, models
+from . import serializers, models, forms
 from django.contrib.auth import login, authenticate
-from django.contrib.auth.forms import UserCreationForm
 from django.shortcuts import render, redirect
 from django.http import JsonResponse, HttpResponse, Http404, HttpResponseBadRequest
 from django.contrib.auth.decorators import login_required
@@ -29,7 +28,7 @@ class IndexTemplateView(LoginRequiredMixin, TemplateView):
 
 def signup(request):
     if request.method == 'POST':
-        form = UserCreationForm(request.POST)
+        form = forms.MyUserCreationForm(request.POST)
         if form.is_valid():
             form.save()
             username = form.cleaned_data.get('username')
@@ -38,7 +37,7 @@ def signup(request):
             login(request, user)
             return redirect('entry-point')
     else:
-        form = UserCreationForm()
+        form = forms.MyUserCreationForm()
     return render(request, 'registration/signup.html', {'form': form})
 
 def get_company_qs(request):
