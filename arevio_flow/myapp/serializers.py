@@ -17,7 +17,7 @@ class TaxonomySerializer(serializers.ModelSerializer):
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ['username', 'email', 'groups', 'is_staff']
+        fields = ['username', 'email', 'is_superuser', 'first_name', 'last_name']
 
 
 class AnnualReportSerializer(serializers.ModelSerializer):

@@ -9,7 +9,7 @@
         <!-- Right aligned nav items -->
         <b-navbar-nav class="ml-auto">
 
-          <b-nav-item v-if="userdata && userdata.is_staff" href="/admin/" v-b-tooltip.hover title="Admin site"><font-awesome-icon icon="user-cog" /></b-nav-item>
+          <b-nav-item v-if="userdata && userdata.is_superuser" href="/admin/" v-b-tooltip.hover title="Admin site"><font-awesome-icon icon="user-cog" /></b-nav-item>
 
           <b-nav-item-dropdown right>
             <template v-slot:button-content>
