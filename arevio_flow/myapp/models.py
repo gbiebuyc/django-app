@@ -14,6 +14,7 @@ class Company(models.Model):
     company_type = models.IntegerField(
         choices=COMPANY_TYPE_CHOICES,
         default=CLIENT,
+        blank=True,
     )
     users = models.ManyToManyField(User, blank=True)
     class Meta:

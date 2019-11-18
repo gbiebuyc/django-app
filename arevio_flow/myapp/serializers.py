@@ -30,4 +30,6 @@ class AnnualReportSerializer(serializers.ModelSerializer):
     def get_updated_by_user(self, obj):
         if not obj.updated_by_user:
             return 'n/a'
-        return obj.updated_by_user.username
+        first_name = obj.updated_by_user.first_name
+        last_name = obj.updated_by_user.last_name
+        return f'{first_name} {last_name}'
