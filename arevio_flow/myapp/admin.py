@@ -22,7 +22,7 @@ class MyUserAdmin(UserAdmin):
     list_filter = ('company', 'is_superuser',)
     list_display = ('get_full_name', 'get_user_company', 'is_superuser')
     def get_full_name(self, obj):
-        return f'{obj.first_name} {obj.last_name}'
+        return f'{obj.last_name} {obj.first_name}'
     get_full_name.short_description = "Full name"
     def get_user_company(self, obj):
         return ', '.join(c.name for c in obj.company_set.all())

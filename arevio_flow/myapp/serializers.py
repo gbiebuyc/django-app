@@ -32,4 +32,4 @@ class AnnualReportSerializer(serializers.ModelSerializer):
             return 'n/a'
         first_name = obj.updated_by_user.first_name
         last_name = obj.updated_by_user.last_name
-        return f'{first_name} {last_name}'
+        return f'{last_name} {first_name}'
