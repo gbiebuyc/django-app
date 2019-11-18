@@ -40,7 +40,7 @@ INSTALLED_APPS = [
     'crispy_forms',
     'webpack_loader',
     'rest_framework',
-    'myapp',
+    'myapp.apps.MyAppConfig',
 ]
 
 MIDDLEWARE = [
