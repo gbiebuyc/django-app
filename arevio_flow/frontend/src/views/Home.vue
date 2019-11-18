@@ -32,6 +32,7 @@
       select-mode="multi"
       @row-selected="onRowSelected"
       small
+      sort-by='updated_at'
     > <template v-slot:cell(actions)="row">
         <b-button variant="light" pill class="mr-2 report-action-btn text-secondary" @click="onClickDownloadReport(row.item, 'xlsx')" v-b-tooltip.hover title="Download">
           <font-awesome-icon icon="file-download" />
