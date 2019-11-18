@@ -37,9 +37,11 @@
       <p v-if="loading" class="pt-3">Loading...</p>
       <router-view v-else :userdata="userdata" @fetchData="fetchData" @handleError="handleError"/>
     </div>
+    <div class="footer" style="border-top: 1px solid #eceef1;"></div>
     <div class="container p-0 footer">
-      <div style="display: flex; flex-direction: column; align-items: flex-end; height: 100%">
-        <div style="display: flex; flex-direction: row; align-items: center; height: 100%">
+      <div style="display: flex; flex-direction: row; align-items: center; height: 100%; width: 100%">
+        <img src="/static/acsone-logo.png" width="100px">
+        <div style="display: flex; flex-direction: column; align-items: flex-end; width: 100%">
           <p class="m-0 text-secondary">Copyright ©&nbsp;2019 ACSONE SA/NV</p>
         </div>
       </div>
