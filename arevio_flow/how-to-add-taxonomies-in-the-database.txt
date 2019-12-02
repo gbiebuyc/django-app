@@ -1,0 +1,13 @@
+In the Django admin site > Taxonomies, click ADD TAXONOMY.
+
+Choose a name and an empty XBRL template file.
+
+For ArelleCmdLine options here are some examples:
+
+Solvency 2.3.0 QRS
+------------------
+--packages "%ARELLE_HOME%/taxonomies/xbrl/www.xbrl.org.zip|%ARELLE_HOME%/taxonomies/eurofiling/www.eurofiling.info.zip|%ARELLE_HOME%/taxonomies/solvency/2.0.1/EIOPA_SolvencyII_XBRL_Taxonomy_2.0.1.zip|%ARELLE_HOME%/taxonomies/solvency/2.1.0/EIOPA_SolvencyII_XBRL_Taxonomy_2.1.0.zip|%ARELLE_HOME%/taxonomies/solvency/2.2.0/EIOPA_SolvencyII_XBRL_Taxonomy_2.2.0Hotfix.zip|%ARELLE_HOME%/taxonomies/solvency/2.3.0/EIOPA_SolvencyII_XBRL_Taxonomy_2.3.0_Hotfix.zip" --plugins="%ARELLE_HOME%/plugin/acsone/acsoneExtensions.py|%ARELLE_HOME%/plugin/validate/EBA"
+
+Solvency 2.4.0 QRS
+------------------
+-v --formulaUnsatisfiedAsserError --logFile=testlog.xml --logLevel=warning --internetConnectivity=offline --disclosureSystem=eiopa --plugins="%ARELLE_HOME%/plugin/acsone/acsoneExtensions.py|%ARELLE_HOME%/plugin/validate/EBA" --packages "%ARELLE_HOME%/taxonomies/xbrl/www.xbrl.org.zip|%ARELLE_HOME%/taxonomies/eurofiling/www.eurofiling.info.zip|%ARELLE_HOME%/taxonomies/solvency/2.0.1/EIOPA_SolvencyII_XBRL_Taxonomy_2.0.1.zip|%ARELLE_HOME%/taxonomies/solvency/2.1.0/EIOPA_SolvencyII_XBRL_Taxonomy_2.1.0.zip|%ARELLE_HOME%/taxonomies/solvency/2.2.0/EIOPA_SolvencyII_XBRL_Taxonomy_2.2.0Hotfix.zip|%ARELLE_HOME%/taxonomies/solvency/2.3.0/EIOPA_SolvencyII_XBRL_Taxonomy_2.3.0_Hotfix.zip|%ARELLE_HOME%/taxonomies/solvency/2.4.0/EIOPA_SolvencyII_XBRL_Taxonomy_2.4.0_Hotfix.zip"
