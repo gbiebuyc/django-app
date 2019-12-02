@@ -40,7 +40,7 @@
         <b-button variant="light" pill class="mr-2 report-action-btn text-secondary" @click="onClickUploadReport(row.item)" v-b-tooltip.hover title="Upload">
           <font-awesome-icon icon="file-upload" />
         </b-button>
-        <b-button variant="light" pill class="mr-2 report-action-btn text-secondary" v-b-modal.notyetimplemented v-b-tooltip.hover title="HTML Preview">
+        <b-button variant="light" pill class="mr-2 report-action-btn text-secondary" @click="onClickPreview(row.item)" v-b-tooltip.hover title="HTML Preview">
           <font-awesome-icon icon="eye" />
         </b-button>
         <b-button variant="light" pill class="mr-2 report-action-btn text-secondary" @click="onClickRename(row.item)" v-b-tooltip.hover title="Rename">
@@ -294,6 +294,18 @@ export default {
         }).then(response => {
           if (!response.ok) throw response;
           this.$emit('fetchData')
+        }).catch(error => this.$emit('handleError', error));
+    },
+    onClickPreview(item) {
+      this.$bvModal.show('spinner-modal');
+      fetch(`/annualreports/${item.id}/?file_type=html`, {
+          method: "GET",
+          headers: {'X-CSRFTOKEN': CSRF_TOKEN},
+        }).then(response => {
+          if (!response.ok) throw response;
+          console.log(response);
+          this.$bvModal.hide('spinner-modal');
+          window.open(`/static/${item.id}.html`);
         }).catch(error => this.$emit('handleError', error));
     },
   },

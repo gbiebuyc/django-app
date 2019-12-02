@@ -4,7 +4,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from . import serializers, models, forms
 from django.contrib.auth import login, authenticate
 from django.shortcuts import render, redirect
-from django.http import JsonResponse, HttpResponse, Http404, HttpResponseBadRequest
+from django.http import JsonResponse, HttpResponse, Http404, HttpResponseBadRequest, HttpResponseServerError
 from django.contrib.auth.decorators import login_required
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -78,6 +78,15 @@ def get_arelle_command(report, xbrl_file):
             "%ARELLE_HOME%", settings.ARELLE_HOME),
         '-f', xbrl_file])
 
+def get_preview_file_name(report):
+    directory = os.path.join(settings.BASE_DIR, 'html_preview')
+    try:
+        if not os.path.exists(directory):
+            os.makedirs(directory)
+    except:
+        return HttpResponseServerError()
+    return os.path.join(directory, f'{report.id}.html')
+
 class AnnualReportList(APIView):
     def post(self, request):
         serializer = serializers.AnnualReportSerializer(data=request.data)
@@ -112,13 +121,20 @@ class AnnualReportDetail(APIView):
     def get(self, request, pk):
         report = self.get_object(request, pk)
         xbrl_file = os.path.join(settings.XBRL_DIR, f'{report.id}.xbrl')
-        excel_file = os.path.join(settings.XBRL_DIR, f'{report.id}.xlsx')
         file_type = request.GET.get('file_type', 'xlsx')
+        cmd = get_arelle_command(report, xbrl_file)
         if file_type == 'xlsx':
-            cmd = get_arelle_command(report, xbrl_file)
-            cmd += ' --save-XLSX-rw=' + excel_file
+            outfile = os.path.join(settings.XBRL_DIR, f'{report.id}.xlsx')
+            cmd += ' --save-XLSX-rw=' + outfile
             os.system(cmd)
-        with open(excel_file if file_type == 'xlsx' else xbrl_file, 'rb') as f:
+        elif file_type == "html":
+            outfile = get_preview_file_name(report)
+            cmd += ' --save-HTML-tablesets ' + outfile
+            os.system(cmd)
+            return HttpResponse()
+        else:
+            outfile = xbrl_file
+        with open(outfile, 'rb') as f:
             response = HttpResponse(f.read(), content_type="application/vnd.ms-excel")
             response['Content-Disposition'] = f'inline; filename={report.name}.xlsx'
             return response
