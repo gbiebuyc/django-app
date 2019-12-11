@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?instance-generator id="AREVIO" version="3.1.9-Snapshot-201911061330" creationdate="2019-11-19 08:49:52"?>
+<xbrl
+  xml:lang="en"
+  xmlns="http://www.xbrl.org/2003/instance"
+  xmlns:link="http://www.xbrl.org/2003/linkbase"
+  xmlns:xlink="http://www.w3.org/1999/xlink">
+    <link:schemaRef
+      xlink:href="http://eiopa.europa.eu/eu/xbrl/s2md/fws/solvency/solvency2/2019-07-15/mod/qrs.xsd"
+      xlink:type="simple"/>
+</xbrl>

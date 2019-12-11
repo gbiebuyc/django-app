@@ -177,7 +177,7 @@ export default {
       ],
       filterIncludedFields: ['company'],
       newReportName: null,
-      newReportTaxonomy: this.userdata.taxonomies[0].id,
+      newReportTaxonomy: this.userdata.taxonomies[0] ? this.userdata.taxonomies[0].id : null,
       selectedRows: [],
       file: null,
       clickedReport: null,
