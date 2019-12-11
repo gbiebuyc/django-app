@@ -1,8 +1,34 @@
-In the Django admin site > Taxonomies, click ADD TAXONOMY.
+Instructions for Arevio-Flow
 
-Choose a name and an empty XBRL template file.
+REQUIREMENTS: Python 3, node.js and Arevio
 
-For ArelleCmdLine options here are some examples:
+PART 1 - DJANGO BACKEND
+---------------------------------
+- Clone the repo and cd into it.
+- python3 -m venv venv
+- source venv/bin/activate
+- pip3 install -r requirements.txt
+- cd arevio_flow
+- python3 manage.py migrate
+- python3 manage.py createsuperuser
+- python3 manage.py runserver
+
+PART 2 - VUE.JS FRONTEND
+---------------------------------
+- Open a new terminal
+- cd path_to_repo/arevio_flow/frontend
+- npm install
+- npm run serve
+
+PART 3 - OPEN IN THE BROWSER
+---------------------------------
+- Go to localhost:[port of django server]
+
+PART 4 - ADDING TAXONOMIES
+---------------------------------
+- In the Django admin site > Taxonomies, click ADD TAXONOMY.
+- Choose a name and an empty XBRL template file (You can find some in path_to_repo/arevio_flow/xbrl_templates).
+- For ArelleCmdLine options here are some examples:
 
 Solvency 2.3.0 QRS
 ------------------
