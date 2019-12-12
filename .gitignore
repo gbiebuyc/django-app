@@ -7,6 +7,7 @@ package-lock.json
 *.xbrl
 *.xlsx
 logfile.xml
+testlog.xml
 html_preview/
 
 # Created by https://www.gitignore.io/api/vim,node,linux,python,django
