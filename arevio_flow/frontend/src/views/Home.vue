@@ -27,7 +27,7 @@
       :items="userdata.reports"
       :fields="fields"
       :filter="filter"
-      :filter-included-fields="filterIncludedFields"
+      :filter-function="myFilterFunction"
       selectable
       select-mode="multi"
       @row-selected="onRowSelected"
@@ -175,7 +175,6 @@ export default {
         },
         'actions',
       ],
-      filterIncludedFields: ['company'],
       newReportName: null,
       newReportTaxonomy: this.userdata.taxonomies[0] ? this.userdata.taxonomies[0].id : null,
       selectedRows: [],
@@ -188,6 +187,9 @@ export default {
   methods: {
     onRowSelected(items) {
       this.selectedRows = items;
+    },
+    myFilterFunction(item, filter) {
+      return item.company.toString() === filter;
     },
     newReport() {
       fetch('/annualreports/', {
